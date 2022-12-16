@@ -1,75 +1,59 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import './charInfo.scss';
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
+
 import MarvelService from '../../service/MarvelService';
 import Spinner from '../spinner/Spinner';
 
-class CharInfo extends Component {
-    state = {
-        char: {},
-        error: false,
-        loading: false
-    }
+const CharInfo = (props) => {
+    const [char, setChar] = useState({});
+    const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    marvelService = new MarvelService();
+    const marvelService = new MarvelService();
 
-    componentDidMount() {
-        this.updateCharInfo();
-    }
+    useEffect(() => {
+        updateCharInfo();
+    }, [props.charID])
 
-    componentDidUpdate(prevProp) {
-        if (this.props.charID !== prevProp.charID) {
-            this.updateCharInfo();
-        }
-    }
-
-    updateCharInfo = () => {
-        const { charID } = this.props;
+    const updateCharInfo = () => {
+        const { charID } = props;
         if (!charID) {
             return;
         }
-        this.newCharInfoLodading();
-        this.marvelService
+        newCharInfoLodading();
+        marvelService
             .getCharacter(charID)
-            .then(this.newCharInfoLodaded)
-            .catch(this.newCharInfoError)
+            .then(newCharInfoLodaded)
+            .catch(newCharInfoError)
     }
 
-    newCharInfoLodading = () => {
-        this.setState({
-            loading: true,
-            error: false
-        })
+    const newCharInfoLodading = () => {
+        setError(false)
+        setLoading(true)
     }
 
-    newCharInfoError = () => {
-        this.setState({
-            error: true,
-            loading: false
-        })
+    const newCharInfoError = () => {
+        setError(true)
+        setLoading(false)
     }
 
-    newCharInfoLodaded = (char) => {
-        this.setState({
-            char,
-            error: false,
-            loading: false
-        })
+    const newCharInfoLodaded = (char) => {
+        setError(false)
+        setLoading(false)
+        setChar(char)
     }
 
-    render() {
-        const { char, error, loading } = this.state;
-        const skeleton = loading ? <Spinner /> : null;
-        const errorMessage = error ? <h3>Виникла якась помилка, клікніть на другий елемент</h3> : null;
-        const content = !(loading || error) ? <View char={char} /> : null;
-
-        return (
-            <div className="char__info">
-                {skeleton}
-                {errorMessage}
-                {content}
-            </div>
-        )
-    }
+    const skeleton = loading ? <Spinner /> : null;
+    const errorMessage = error ? <h3>Виникла якась помилка, клікніть на другий елемент</h3> : null;
+    const content = !(loading || error) ? <View char={char} /> : null;
+    return (
+        <div className="char__info">
+            {skeleton}
+            {errorMessage}
+            {content}
+        </div>
+    )
 }
 
 const View = ({ char }) => {
@@ -78,7 +62,6 @@ const View = ({ char }) => {
     if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
         imgStyle = { 'objectFit': 'contain' };
     }
-
     return (
         <>
             <div className="char__basics">

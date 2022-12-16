@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-expressions */
+
 import { useState, useEffect } from 'react';
 
 import MarvelService from '../../service/MarvelService';

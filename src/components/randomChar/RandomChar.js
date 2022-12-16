@@ -1,74 +1,69 @@
 import './randomChar.scss';
+
 import mjolnir from '../../resources/img/mjolnir.png';
-import { Component } from 'react';
 import MarvelService from '../../service/MarvelService';
 import Spinner from '../spinner/Spinner';
 
-class RandomChar extends Component {
-    state = {
-        char: {},
-        error: false,
-        loading: true
-    }
-    componentDidMount() {
-        this.updateChar();
-    }
-    marvelService = new MarvelService();
-    updateChar = () => {
-        this.onCharLoading();
-        let id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-        this.marvelService.getCharacter(id)
-            .then(this.onCharLoaded)
-            .catch(this.onCharError)
-    }
-    onCharLoading = () => {
-        this.setState({
-            loading: true,
-            error: false
-        })
-    }
-    onCharError = () => {
-        this.setState({
-            error: true,
-            loading: false
-        })
-    }
-    onCharLoaded = (char) => {
-        this.setState({
-            char,
-            error: false,
-            loading: false
-        })
-    }
-    render() {
-        const { char, error, loading } = this.state;
-        const errorMessage = error ? 'Some Error' : null;
-        const spinner = loading ? <Spin /> : null;
-        const content = !(error || loading) ? <View char={char} /> : null
+import { useState, useEffect } from 'react';
 
-        return (
-            <div className="randomchar">
-                <div className="randomchar__block">
-                    {spinner}
-                    {content}
-                    {errorMessage}
-                </div>
-                <div className="randomchar__static">
-                    <p className="randomchar__title">
-                        Random character for today!<br />
-                        Do you want to get to know him better?
-                    </p>
-                    <p className="randomchar__title">
-                        Or choose another one
-                    </p>
-                    <button onClick={this.updateChar} className="button button__main">
-                        <div className="inner">try it</div>
-                    </button>
-                    <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
-                </div>
-            </div>
-        )
+const RandomChar = () => {
+    const [char, setChar] = useState({});
+    const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        updateChar();
+    }, []);
+
+    const marvelService = new MarvelService();
+
+    const updateChar = () => {
+        onCharLoading();
+        let id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
+        marvelService.getCharacter(id)
+            .then(onCharLoaded)
+            .catch(onCharError)
     }
+    const onCharLoading = () => {
+        setLoading(true)
+        setError(false)
+    }
+    const onCharError = () => {
+        setLoading(false)
+        setError(true)
+    }
+    const onCharLoaded = (char) => {
+        setChar(char)
+        setLoading(false)
+        setError(false)
+    }
+
+    const errorMessage = error ? 'Some Error' : null;
+    const spinner = loading ? <Spin /> : null;
+    const content = !(error || loading) ? <View char={char} /> : null
+
+    return (
+        <div className="randomchar">
+            <div className="randomchar__block">
+                {spinner}
+                {content}
+                {errorMessage}
+            </div>
+            <div className="randomchar__static">
+                <p className="randomchar__title">
+                    Random character for today!<br />
+                    Do you want to get to know him better?
+                </p>
+                <p className="randomchar__title">
+                    Or choose another one
+                </p>
+                <button onClick={updateChar} className="button button__main">
+                    <div className="inner">try it</div>
+                </button>
+                <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
+            </div>
+        </div>
+    )
 }
 
 const Spin = () => {
