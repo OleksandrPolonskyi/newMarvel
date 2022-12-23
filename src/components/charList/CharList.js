@@ -1,47 +1,29 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-expressions */
-
 import { useState, useEffect } from 'react';
 
-import MarvelService from '../../service/MarvelService';
+import useMarvelService from '../../service/MarvelService';
 import Spinner from '../spinner/Spinner';
 
 import './charList.scss';
 
 const CharList = (props) => {
     const [charList, setCharList] = useState([]);
-    const [error, setError] = useState(false);
-    const [loading, setLoading] = useState(true);
     const [offset, setOffset] = useState(0);
 
-    const marvelService = new MarvelService();
+    const { loading, error, getCharacters } = useMarvelService();
 
-    //Запускається після того як уже все відрендерелось, тому може визиватись самого верху
     useEffect(() => {
         onRequest();
     }, [])
 
     const onRequest = (offset) => {
-        charListLoading();
-        marvelService.getCharacters(offset)
+        getCharacters(offset)
             .then(charListLoaded)
-            .catch(charListError)
-    }
-
-    const charListLoading = () => {
-        setError(false)
-        setLoading(loading => true)
-    }
-
-    const charListError = () => {
-        setError(true)
-        setLoading(loading => false)
     }
 
     const charListLoaded = (newCharList) => {
         setCharList(charList => [...charList, ...newCharList])
-        setError(false)
-        setLoading(loading => false)
         setOffset(offset => offset + 9)
     }
 
@@ -65,7 +47,6 @@ const CharList = (props) => {
             </ul>
         )
     }
-
 
     const content = renderCharItem(charList);
     const spinnner = loading ? <Spinner /> : null;

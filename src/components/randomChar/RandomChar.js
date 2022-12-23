@@ -1,41 +1,28 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import './randomChar.scss';
 
 import mjolnir from '../../resources/img/mjolnir.png';
-import MarvelService from '../../service/MarvelService';
+import useMarvelService from '../../service/MarvelService';
 import Spinner from '../spinner/Spinner';
 
 import { useState, useEffect } from 'react';
 
 const RandomChar = () => {
     const [char, setChar] = useState({});
-    const [error, setError] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const { loading, error, getCharacter } = useMarvelService();
 
     useEffect(() => {
         updateChar();
     }, []);
 
-    const marvelService = new MarvelService();
-
     const updateChar = () => {
-        onCharLoading();
         let id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-        marvelService.getCharacter(id)
+        getCharacter(id)
             .then(onCharLoaded)
-            .catch(onCharError)
     }
-    const onCharLoading = () => {
-        setLoading(true)
-        setError(false)
-    }
-    const onCharError = () => {
-        setLoading(false)
-        setError(true)
-    }
+
     const onCharLoaded = (char) => {
         setChar(char)
-        setLoading(false)
-        setError(false)
     }
 
     const errorMessage = error ? 'Some Error' : null;
