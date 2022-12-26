@@ -1,22 +1,25 @@
 import './appHeader.scss';
+import { Link, NavLink } from 'react-router-dom';
+
 
 const AppHeader = () => {
     return (
         <header className="app__header">
             <h1 className="app__title">
-                <a href="dd">
+                <Link to="/">
                     <span>Marvel</span> information portal
-                </a>
+                </Link>
             </h1>
             <nav className="app__menu">
                 <ul>
-                    <li><a href="dd">Characters</a></li>
+                    <li><NavLink end to="/" style={({ isActive }) => ({ color: isActive ? 'red' : 'inherit' })}>Characters</NavLink></li>
                     /
-                    <li><a href="dd">Comics</a></li>
+                    <li><NavLink end to="/comics" style={({ isActive }) => ({ color: isActive ? 'red' : 'inherit' })}>Comics</NavLink></li>
                 </ul>
             </nav>
         </header>
     )
 }
+
 
 export default AppHeader;

@@ -23,7 +23,7 @@ const CharList = (props) => {
     }
 
     const charListLoaded = (newCharList) => {
-        setCharList(charList => [...charList, ...newCharList])
+        setCharList([...charList, ...newCharList])
         setOffset(offset => offset + 9)
     }
 
